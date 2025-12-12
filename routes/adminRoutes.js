@@ -11,7 +11,7 @@ const router = express.Router();
 //   res.json(users);
 // });
 
-router.get("/users", isAdmin, async (req, res) => {
+router.get("/users",async (req, res) => {
   const users = await User.find();
   res.json({
     success: true,
