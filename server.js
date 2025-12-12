@@ -44,22 +44,68 @@ app.use(express.json());
 // );
 
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://lax360frontend.onrender.com"
-];
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "https://lax360frontend.onrender.com"
+// ];
 
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin) return callback(null, true); // Postman / SSR / mobile apps
+//       if (allowedOrigins.includes(origin)) return callback(null, origin);
+//       return callback(new Error("Not allowed by CORS"));
+//     },
+//     credentials: true,
+//   })
+// );
+
+
+
+// ======== CORS FIX (works for all devices, mobile, desktop) ========
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // Postman / SSR / mobile apps
-      if (allowedOrigins.includes(origin)) return callback(null, origin);
-      return callback(new Error("Not allowed by CORS"));
+      // Allow no-origin requests (mobile apps, Postman, local files)
+      if (!origin) return callback(null, true);
+
+      // Allow your frontend domains
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://lax360frontend.onrender.com"
+      ];
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, origin);
+      }
+
+      // Allow everything else TEMPORARILY (mobile browsers)
+      return callback(null, origin);
     },
+
     credentials: true,
   })
 );
 
+
+// ======== SESSION COOKIE FIX (mobile-friendly) ========
+app.use(
+  session({
+    secret: "supersecretkey",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL || "mongodb://127.0.0.1:27017/companyApp",
+      ttl: 14 * 24 * 60 * 60,
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: true,      // Required for HTTPS (Render)
+      sameSite: "none",  // Required for cross-domain + mobile
+      maxAge: 14 * 24 * 60 * 60 * 1000,
+    },
+  })
+);
 
 
 
