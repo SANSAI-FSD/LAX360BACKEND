@@ -63,6 +63,8 @@ app.use(express.json());
 
 
 // ======== CORS FIX (works for all devices, mobile, desktop) ========
+
+app.set('trust proxy', 1);
 app.use(
   cors({
     origin: (origin, callback) => {
