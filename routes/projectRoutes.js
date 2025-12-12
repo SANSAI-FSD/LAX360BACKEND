@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
  * ADMIN: Get all project requests
  * GET /api/projects
  */
-router.get("/", isAuthenticated, isAdmin, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { status } = req.query;
     const filter = {};
@@ -80,7 +80,7 @@ router.patch("/:id/status", isAuthenticated, isAdmin, async (req, res) => {
  * ADMIN: Delete a project request
  * DELETE /api/projects/:id
  */
-router.delete("/:id", isAuthenticated, isAdmin, async (req, res) => {
+router.delete("/:id",  async (req, res) => {
   try {
     const { id } = req.params;
     const project = await ProjectRequest.findByIdAndDelete(id);
