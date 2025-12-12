@@ -33,11 +33,28 @@ app.use(express.json());
 //   })
 // );
 
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin) return callback(null, true); // allow mobile apps, Postman, React SSR
+//       return callback(null, origin);            // allow frontend domains
+//     },
+//     credentials: true,
+//   })
+// );
+
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://lax360frontend.onrender.com"
+];
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow mobile apps, Postman, React SSR
-      return callback(null, origin);            // allow frontend domains
+      if (!origin) return callback(null, true); // Postman / SSR / mobile apps
+      if (allowedOrigins.includes(origin)) return callback(null, origin);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
